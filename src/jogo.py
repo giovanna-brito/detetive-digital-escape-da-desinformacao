@@ -5,138 +5,230 @@ from src.config import (
     ALTURA_TELA,
     FPS,
     TITULO_JOGO,
-    CINZA,
-    CAMINHO_RECORDE,
-    CAMINHO_SPRITES,
+    FUNDO,
+    COR_JOGADOR,
+    COR_COMPUTADOR,
+    COR_TEXTO,
+    LARGURA_JOGADOR,
+    ALTURA_JOGADOR,
+    VELOCIDADE_JOGADOR,
+    LARGURA_COMPUTADOR,
+    ALTURA_COMPUTADOR,
+    VIDAS_INICIAIS,
+    PONTOS_RESPOSTA_CORRETA,
 )
 
 from src.funcoes import (
-    calcular_pontos,
-    jogador_perdeu,
-    limitar_valor,
-    verificar_colisao,
-    tomar_dano,
+    desenhar_jogador,
+    movimentar_jogador,
+    desenhar_cenario,
+    desenhar_computador,
+    jogador_perto_computador,
+    desenhar_tela_investigacao,
 )
-from src.sprites import pegar_sprite
+
 from src.dados import (
-    salvar_recorde,
-    carregar_recorde,
+    obter_noticia,
+    verificar_resposta,
 )
 
 
 def executar_jogo():
-    """Executa o loop principal do jogo e controla estado, colisões e pontuação."""
+    """Inicializa e executa o jogo Detetive Digital."""
+
     pygame.init()
-    
 
     tela = pygame.display.set_mode((LARGURA_TELA, ALTURA_TELA))
     pygame.display.set_caption(TITULO_JOGO)
 
     relogio = pygame.time.Clock()
+    fonte = pygame.font.Font(None, 30)
+
     rodando = True
 
-    # 1. Carregando as imagens recortadas do Spritesheet
+    # Criando o jogador
+    jogador_x = 100
+    jogador_y = 100
 
+    # Criando o computador
+    computador_x = 550
+    computador_y = 350
 
-    # Jogador: usando tamanho 110x110 para capturar o quadrado perfeitamente
-    player_image = pegar_sprite(CAMINHO_SPRITES, x=110, y=120, width=190, height=190, scale=0.5)
-
-    # Gema pequena: usando tamanho 64x64
-    gem_image    = pegar_sprite(CAMINHO_SPRITES, x=900, y=690, width=200, height=200, scale=0.5)
-
-    # Morcego: usando tamanho 180x120 por causa das asas abertas
-    bat_image    = pegar_sprite(CAMINHO_SPRITES, x=905, y=1060, width=200, height=130, scale=0.5)
-    
-    # 2. Criando a estrutura de Sprites usando Dicionários
-    jogador = {
-        "imagem": player_image,
-        "rect": player_image.get_rect(topleft=(100, 100))
-    }
-
-    gema = {
-        "imagem": gem_image,
-        "rect": gem_image.get_rect(topleft=(500, 300))
-    }
-    
-    inimigo = {
-        "imagem": bat_image,
-        "rect": bat_image.get_rect(topleft=(200, 500))
-    }
-
-    velocidade = 5
+    # Estado inicial do jogo
+    vidas = VIDAS_INICIAIS
     pontos = 0
-    vidas = 3
-    recorde = carregar_recorde(CAMINHO_RECORDE)
 
-    # Loop principal: processa entrada, atualiza estado e renderiza a cena.
+    investigando = False
+    resultado = None
+    noticia_concluida = False
+
+    # Carregando a primeira notícia
+    noticia_atual = obter_noticia(0)
+
+    # Loop principal do jogo
     while rodando:
-        relogio.tick(FPS)
 
+        dt = relogio.tick(FPS) / 1000
+
+        # Processamento dos eventos
         for evento in pygame.event.get():
+
             if evento.type == pygame.QUIT:
                 rodando = False
 
-        teclas = pygame.key.get_pressed()
+            if evento.type == pygame.KEYDOWN:
 
-        # Movimentação alterando direto os eixos X e Y do retângulo do jogador
-        if teclas[pygame.K_LEFT]:
-            jogador["rect"].x -= velocidade
-        if teclas[pygame.K_RIGHT]:
-            jogador["rect"].x += velocidade
-        if teclas[pygame.K_UP]:
-            jogador["rect"].y -= velocidade
-        if teclas[pygame.K_DOWN]:
-            jogador["rect"].y += velocidade
+                # Quando o jogador está investigando
+                if investigando:
 
-        # Limitando o jogador dentro das bordas da tela usando as propriedades do Rect
-        jogador["rect"].x = limitar_valor(jogador["rect"].x, 0, LARGURA_TELA - jogador["rect"].width)
-        jogador["rect"].y = limitar_valor(jogador["rect"].y, 0, ALTURA_TELA - jogador["rect"].height)
+                    if resultado is None:
 
-        # Verificação de colisão com a Gema (antigo 'item')
-        if verificar_colisao(jogador["rect"], gema["rect"]):
-            pontos = calcular_pontos(pontos, 10)
+                        if evento.key == pygame.K_1:
+                            resposta = "Real"
 
-            # Move a gema de lugar ao coletar
-            gema["rect"].x += 80
-            gema["rect"].y += 50
+                        elif evento.key == pygame.K_2:
+                            resposta = "Manipulada"
 
-            # Se a gema sair da tela, volta para uma posição segura
-            if gema["rect"].x > LARGURA_TELA - gema["rect"].width:
-                gema["rect"].x = 50
-            if gema["rect"].y > ALTURA_TELA - gema["rect"].height:
-                gema["rect"].y = 50
+                        elif evento.key == pygame.K_3:
+                            resposta = "Criada por IA"
 
-        # Verificação de colisão com o Inimigo
-        if verificar_colisao(jogador["rect"], inimigo["rect"]):
-            vidas = tomar_dano(vidas, 1)
+                        else:
+                            resposta = None
 
-            # Afasta o inimigo ao colidir
-            inimigo["rect"].x += 80
-            inimigo["rect"].y += 50
+                        if resposta is not None:
 
-            if inimigo["rect"].x > LARGURA_TELA - inimigo["rect"].width:
-                inimigo["rect"].x = 50
-            if inimigo["rect"].y > ALTURA_TELA - inimigo["rect"].height:
-                inimigo["rect"].y = 50
+                            resultado = verificar_resposta(
+                                0, resposta
+                            )
 
-        # Regras de fim de jogo e recorde
-        if jogador_perdeu(vidas):
-            rodando = False
+                            if resultado:
+                                pontos += PONTOS_RESPOSTA_CORRETA
+                            else:
+                                vidas -= 1
 
-        if pontos > recorde:
-            recorde = pontos
-            salvar_recorde(CAMINHO_RECORDE, recorde)
+                            noticia_concluida = True
 
-        pygame.display.set_caption(
-            f"{TITULO_JOGO} | Pontos: {pontos} | Recorde: {recorde} | Vidas: {vidas}"
+                    elif evento.key == pygame.K_e:
+                        investigando = False
+
+                # Quando o jogador está no cenário
+                elif evento.key == pygame.K_e:
+
+                    perto = jogador_perto_computador(
+                        jogador_x,
+                        jogador_y,
+                        LARGURA_JOGADOR,
+                        ALTURA_JOGADOR,
+                        computador_x,
+                        computador_y,
+                        LARGURA_COMPUTADOR,
+                        ALTURA_COMPUTADOR,
+                    )
+
+                    if perto and not noticia_concluida:
+                        investigando = True
+
+        # Movimentação do jogador
+        if not investigando and vidas > 0 and not noticia_concluida:
+
+            jogador_x, jogador_y = movimentar_jogador(
+                jogador_x,
+                jogador_y,
+                LARGURA_JOGADOR,
+                ALTURA_JOGADOR,
+                VELOCIDADE_JOGADOR,
+                dt,
+            )
+
+        # Desenho do cenário
+        desenhar_cenario(tela, FUNDO)
+
+        # Desenho do computador
+        desenhar_computador(
+            tela,
+            computador_x,
+            computador_y,
+            LARGURA_COMPUTADOR,
+            ALTURA_COMPUTADOR,
+            COR_COMPUTADOR,
         )
 
-        tela.fill(CINZA)
+        # Desenho do jogador
+        desenhar_jogador(
+            tela,
+            COR_JOGADOR,
+            round(jogador_x),
+            round(jogador_y),
+            LARGURA_JOGADOR,
+            ALTURA_JOGADOR,
+        )
 
-        # Desenhando os elementos na tela passando a imagem e o rect de cada dicionário
-        tela.blit(gema["imagem"], gema["rect"])
-        tela.blit(inimigo["imagem"], inimigo["rect"])
-        tela.blit(jogador["imagem"], jogador["rect"])
+        # Informações da partida
+        texto_pontos = fonte.render(
+            f"Pontos: {pontos}", True, COR_TEXTO
+        )
+
+        texto_vidas = fonte.render(
+            f"Vidas: {vidas}", True, COR_TEXTO
+        )
+
+        tela.blit(texto_pontos, (20, 20))
+        tela.blit(texto_vidas, (20, 55))
+
+        # Verifica se o jogador está perto do computador
+        perto = jogador_perto_computador(
+            jogador_x,
+            jogador_y,
+            LARGURA_JOGADOR,
+            ALTURA_JOGADOR,
+            computador_x,
+            computador_y,
+            LARGURA_COMPUTADOR,
+            ALTURA_COMPUTADOR,
+        )
+
+        if perto and not investigando and not noticia_concluida:
+            texto = fonte.render(
+                "Pressione E para investigar",
+                True,
+                COR_TEXTO,
+            )
+            tela.blit(texto, (250, 520))
+
+        # Exibe a tela de investigação
+        if investigando and noticia_atual is not None:
+
+            desenhar_tela_investigacao(
+                tela,
+                noticia_atual,
+                resultado,
+            )
+
+            if resultado is not None:
+                texto = fonte.render(
+                    "Pressione E para fechar",
+                    True,
+                    COR_TEXTO,
+                )
+                tela.blit(texto, (250, 550))
+
+        # Mensagem de investigação concluída
+        if noticia_concluida and not investigando and vidas > 0:
+            texto = fonte.render(
+                "Investigação concluída!",
+                True,
+                COR_TEXTO,
+            )
+            tela.blit(texto, (250, 520))
+
+        # Verifica se o jogador perdeu todas as vidas
+        if vidas <= 0:
+            texto = fonte.render(
+                "Fim de jogo! Você ficou sem vidas.",
+                True,
+                COR_TEXTO,
+            )
+            tela.blit(texto, (200, 520))
 
         pygame.display.flip()
 
