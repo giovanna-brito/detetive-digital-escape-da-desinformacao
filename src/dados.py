@@ -1,19 +1,62 @@
-def salvar_recorde(caminho_arquivo, pontuacao):
-    """Salva a pontuação recorde em arquivo texto."""
-    with open(caminho_arquivo, "w", encoding="utf-8") as arquivo:
-        arquivo.write(str(pontuacao))
+# Notícias disponíveis para as investigações do jogo
+
+NOTICIAS = [
+    {
+        "id": 1,
+        "titulo": "Alerta sobre enchentes na cidade",
+        "conteudo": "Uma publicação afirma que a prefeitura anunciou "
+                    "o fechamento de todas as escolas devido às enchentes.",
+        "alternativas": [
+            "Real",
+            "Manipulada",
+            "Criada por IA"
+        ],
+        "resposta_correta": "Manipulada",
+        "explicacao": "A publicação utiliza uma informação verdadeira "
+                      "sobre as enchentes, mas altera o comunicado oficial. "
+                      "O aviso original não determinou o fechamento de "
+                      "todas as escolas."
+    }
+]
 
 
-def carregar_recorde(caminho_arquivo):
-    """Carrega o recorde salvo; retorna 0 se não existir valor válido."""
-    try:
-        with open(caminho_arquivo, "r", encoding="utf-8") as arquivo:
-            conteudo = arquivo.read().strip()
+def obter_noticia(numero):
+    """Retorna os dados de uma notícia pelo seu índice."""
 
-            if conteudo == "":
-                return 0
+    if 0 <= numero < len(NOTICIAS):
+        return NOTICIAS[numero]
 
-            return int(conteudo)
+    return None
 
-    except FileNotFoundError:
-        return 0
+
+def obter_alternativas(numero):
+    """Retorna as alternativas de classificação de uma notícia."""
+
+    noticia = obter_noticia(numero)
+
+    if noticia is not None:
+        return noticia["alternativas"]
+
+    return []
+
+
+def verificar_resposta(numero, resposta):
+    """Verifica se a resposta escolhida corresponde à correta."""
+
+    noticia = obter_noticia(numero)
+
+    if noticia is not None:
+        return resposta == noticia["resposta_correta"]
+
+    return False
+
+
+def obter_explicacao(numero):
+    """Retorna a explicação da classificação correta."""
+
+    noticia = obter_noticia(numero)
+
+    if noticia is not None:
+        return noticia["explicacao"]
+
+    return "Notícia não encontrada."
