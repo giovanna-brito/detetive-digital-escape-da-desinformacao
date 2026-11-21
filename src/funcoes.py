@@ -68,19 +68,45 @@ def jogador_perto_computador(jogador_x, jogador_y, jogador_largura,
 
     return jogador.colliderect(computador)
 
+def desenhar_tela_investigacao(tela, noticia, resultado):
+    """Desenha o painel com a notícia e as opções de classificação."""
 
-def desenhar_tela_investigacao(tela, resultado):
-    """Desenha o painel de investigação e as opções de classificação."""
+    fonte = pygame.font.Font(None, 25)
+    fonte_titulo = pygame.font.Font(None, 34)
+    fonte_noticia = pygame.font.Font(None, 28)
 
-    fonte = pygame.font.Font(None, 28)
-    fonte_titulo = pygame.font.Font(None, 36)
-
-    pygame.draw.rect(tela, (48, 39, 71), (100, 100, 600, 400))
+    pygame.draw.rect(tela, (48, 39, 71), (70, 70, 660, 460))
 
     titulo = fonte_titulo.render(
         "Investigação", True, (255, 255, 255)
     )
-    tela.blit(titulo, (130, 125))
+    tela.blit(titulo, (100, 90))
+
+    titulo_noticia = fonte_noticia.render(
+        noticia["titulo"], True, (242, 215, 126)
+    )
+    tela.blit(titulo_noticia, (100, 145))
+
+    # Exibe o conteúdo da notícia em linhas
+    palavras = noticia["conteudo"].split()
+    linhas = []
+    linha_atual = ""
+
+    for palavra in palavras:
+        teste = linha_atual + palavra + " "
+
+        if fonte.size(teste)[0] <= 590:
+            linha_atual = teste
+        else:
+            linhas.append(linha_atual)
+            linha_atual = palavra + " "
+
+    if linha_atual:
+        linhas.append(linha_atual)
+
+    for i, linha in enumerate(linhas):
+        texto = fonte.render(linha, True, (255, 255, 255))
+        tela.blit(texto, (100, 190 + i * 28))
 
     opcoes = [
         "1 - Real",
@@ -90,15 +116,23 @@ def desenhar_tela_investigacao(tela, resultado):
 
     for i, opcao in enumerate(opcoes):
         texto = fonte.render(opcao, True, (255, 255, 255))
-        tela.blit(texto, (150, 250 + i * 45))
+        tela.blit(texto, (120, 300 + i * 35))
 
     if resultado is not None:
-        mensagem = "Resposta correta!" if resultado else "Resposta incorreta!"
+        mensagem = (
+            "Resposta correta!" if resultado
+            else "Resposta incorreta!"
+        )
+
         texto_resultado = fonte.render(
             mensagem, True, (255, 255, 255)
         )
-        tela.blit(texto_resultado, (150, 420))
+        tela.blit(texto_resultado, (120, 430))
 
+        explicacao = fonte.render(
+            noticia["explicacao"], True, (255, 255, 255)
+        )
+        tela.blit(explicacao, (120, 465))
 
 def verificar_resposta(resposta_escolhida, resposta_correta):
     """Verifica se a classificação escolhida está correta."""
