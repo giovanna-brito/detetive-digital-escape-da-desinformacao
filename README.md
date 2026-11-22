@@ -1,77 +1,86 @@
-# Nome do Jogo
+# 🕵️ Detetive Digital: Escape da Desinformação
 
 Projeto final da disciplina de Introdução a Algoritmos/Programação, desenvolvido com Python e Pygame.
 
-Este repositório é um template para os grupos da disciplina. A proposta é começar com uma base funcional e evoluir o jogo ao longo do semestre.
+O jogo tem como proposta estimular o pensamento crítico e a análise de informações por meio de investigações sobre notícias reais, manipuladas e conteúdos criados por Inteligência Artificial.
 
 ## Integrantes do grupo
 
-- Nome do integrante 1
-- Nome do integrante 2
-- Nome do integrante 3
-- Nome do integrante 4
+- Giovanna Brito Silva Ribeiro
 
 ## Estrutura do projeto
 
 - `main.py`: ponto de entrada da aplicação.
-- `src/`: código-fonte principal do jogo (loop, regras, sprites e dados).
-- `assets/`: imagens, fontes e sons.
-- `data/`: arquivos persistentes (recorde/ranking).
+- `src/`: código-fonte principal do jogo, incluindo configurações, funções, gerenciamento de dados, sprites e execução da partida.
+- `assets/`: imagens, fontes e sons utilizados no jogo.
+- `data/`: diretório destinado ao armazenamento de dados do jogo.
 - `tests/`: testes unitários com `pytest`.
-- `docs/`: documentação do projeto, incluindo proposta inicial.
+- `docs/`: documentação do projeto, incluindo a proposta inicial.
 
 ## Descrição do jogo
 
-Descreva brevemente a ideia principal do jogo.
+Detetive Digital: Escape da Desinformação é um jogo educativo em 2D no qual o jogador assume o papel de um investigador digital. Por meio da exploração de um cenário e da interação com computadores, o jogador recebe notícias e precisa analisar as informações apresentadas.
 
-Exemplo:
+Cada conteúdo deve ser classificado em uma das seguintes categorias:
 
-> O jogo consiste em controlar um personagem que deve coletar moedas e evitar obstáculos. O jogador ganha pontos ao coletar itens e perde vidas ao colidir com obstáculos. A partida termina quando o tempo acaba ou quando o jogador perde todas as vidas.
+- **Real:** informação autêntica, respaldada por evidências.
+- **Manipulada:** conteúdo que apresenta alterações ou distorções de informações.
+- **Criada por IA:** conteúdo produzido por ferramentas de Inteligência Artificial.
+
+Após cada investigação, o jogador recebe o resultado da classificação e uma explicação sobre o conteúdo analisado.
 
 ## Objetivo do jogador
 
-Explique o que o jogador precisa fazer para vencer ou avançar no jogo.
+O objetivo é investigar os conteúdos apresentados, identificar corretamente sua classificação e avançar pelas etapas do jogo.
 
-Exemplo:
-
-> O objetivo é coletar a maior quantidade possível de itens antes que o tempo acabe, evitando colisões com os obstáculos.
+O jogador deve utilizar as informações disponíveis e desenvolver uma postura crítica diante de conteúdos que circulam no ambiente digital.
 
 ## Regras do jogo
 
-Liste as principais regras do jogo.
-
-Exemplo:
-
-- O jogador se movimenta usando as setas do teclado.
-- Cada item coletado aumenta a pontuação.
-- Colidir com um obstáculo reduz a quantidade de vidas.
-- A partida termina quando o jogador perde todas as vidas ou quando o tempo acaba.
+- O jogador controla um personagem que pode se movimentar pelo cenário.
+- Para iniciar uma investigação, é necessário se aproximar de um computador e pressionar a tecla E.
+- Cada notícia apresenta três possibilidades de classificação.
+- Uma resposta correta aumenta a pontuação.
+- Uma resposta incorreta reduz uma vida.
+- O jogo possui inicialmente três vidas.
+- Após responder, o jogador recebe uma explicação sobre a classificação.
 
 ## Controles
 
-Informe as teclas ou comandos utilizados no jogo.
-
-Exemplo:
-
-- Seta para cima: mover para cima
-- Seta para baixo: mover para baixo
-- Seta para esquerda: mover para esquerda
-- Seta para direita: mover para direita
-- Espaço: realizar ação
-- ESC: sair do jogo
+- W: mover para cima.
+- S: mover para baixo.
+- A: mover para a esquerda.
+- D: mover para a direita.
+- E: interagir com o computador e abrir ou fechar a investigação.
+- 1: classificar como Real.
+- 2: classificar como Manipulada.
+- 3: classificar como Criada por IA.
+- Fechar a janela: sair do jogo.
 
 ## Como executar o projeto
 
 ### 1. Clonar o repositório
 
 ```bash
-git clone LINK_DO_REPOSITORIO
-cd NOME_DA_PASTA
+git clone https://github.com/giovanna-brito/detetive-digital-escape-da-desinformacao.git
+cd detetive-digital-escape-da-desinformacao
+```
+
+### 2. Instalar as dependências
+
+```bash
 pip install -r requirements.txt
+```
+
+### 3. Executar o jogo
+
+```bash
 python main.py
 ```
 
 ## Como executar os testes
+
+Para executar os testes automatizados, utilize:
 
 ```bash
 python -m pytest
@@ -79,13 +88,13 @@ python -m pytest
 
 ## Checklist mínimo para entrega
 
-- Preencher este README com nome final, descrição real, regras e controles do jogo.
-- Atualizar `docs/proposta.MD` com a proposta do grupo.
-- Garantir que o jogo executa com `python main.py`.
-- Garantir que os testes passam com `pytest`.
+- [x] Preencher o README com a descrição e as regras atuais do jogo.
+- [ ] Atualizar `docs/proposta.MD` com a proposta do grupo.
+- [x] Garantir que o jogo executa com `python main.py`.
+- [ ] Criar e executar os testes com `pytest`.
 
-## Observações para os alunos
+## Observações
 
-- Mantenham o código organizado em módulos pequenos e com responsabilidade clara.
-- Comentem partes importantes da lógica, principalmente regras do jogo.
-- Registrem decisões técnicas no README do grupo ao longo do desenvolvimento.
+- O projeto está sendo desenvolvido de forma modular, com separação entre configurações, regras, dados e execução do jogo.
+- As notícias e suas respectivas respostas são previamente cadastradas.
+- O desenvolvimento está em andamento. Funcionalidades como progressão entre investigações e organização das três fases ainda serão implementadas.
