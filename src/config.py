@@ -28,4 +28,4 @@ PONTOS_RESPOSTA_CORRETA = 10
 # Caminhos dos arquivos
 CAMINHO_SPRITES = "assets/imagens/spritesheet.bmp"
 CAMINHO_NOTICIAS = "data/noticias.json"
-CAMINHO_RECORD​E = "data/recorde.txt"
+CAMINHO_RECORCE = "data/record.txt"

@@ -1,4 +1,3 @@
-
 # Notícias disponíveis para as investigações do jogo
 
 NOTICIAS = [

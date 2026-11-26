@@ -30,6 +30,7 @@ from src.funcoes import (
 from src.dados import (
     obter_noticia,
     verificar_resposta,
+    obter_total_noticias,
 )
 
 
@@ -43,6 +44,7 @@ def executar_jogo():
 
     relogio = pygame.time.Clock()
     fonte = pygame.font.Font(None, 30)
+    fonte_titulo = pygame.font.Font(None, 48)
 
     rodando = True
 
@@ -61,9 +63,14 @@ def executar_jogo():
     investigando = False
     resultado = None
     noticia_concluida = False
+    jogo_concluido = False
+
+    # Controle das notícias
+    numero_noticia = 0
+    total_noticias = obter_total_noticias()
 
     # Carregando a primeira notícia
-    noticia_atual = obter_noticia(0)
+    noticia_atual = obter_noticia(numero_noticia)
 
     # Loop principal do jogo
     while rodando:
@@ -81,6 +88,7 @@ def executar_jogo():
                 # Quando o jogador está investigando
                 if investigando:
 
+                    # Se ainda não respondeu
                     if resultado is None:
 
                         if evento.key == pygame.K_1:
@@ -95,21 +103,48 @@ def executar_jogo():
                         else:
                             resposta = None
 
+                        # Verifica a resposta escolhida
                         if resposta is not None:
 
                             resultado = verificar_resposta(
-                                0, resposta
+                                numero_noticia,
+                                resposta
                             )
 
+                            # Se acertou
                             if resultado:
                                 pontos += PONTOS_RESPOSTA_CORRETA
+
+                            # Se errou
                             else:
                                 vidas -= 1
 
                             noticia_concluida = True
 
+                    # Se já respondeu, E fecha a investigação
                     elif evento.key == pygame.K_e:
+
                         investigando = False
+
+                        # Se ainda possui vidas
+                        if vidas > 0:
+
+                            # Avança para a próxima notícia
+                            numero_noticia += 1
+
+                            # Verifica se existem mais notícias
+                            if numero_noticia < total_noticias:
+
+                                noticia_atual = obter_noticia(
+                                    numero_noticia
+                                )
+
+                                resultado = None
+                                noticia_concluida = False
+
+                            # Se todas as notícias foram investigadas
+                            else:
+                                jogo_concluido = True
 
                 # Quando o jogador está no cenário
                 elif evento.key == pygame.K_e:
@@ -125,11 +160,21 @@ def executar_jogo():
                         ALTURA_COMPUTADOR,
                     )
 
-                    if perto and not noticia_concluida:
+                    # Inicia uma investigação
+                    if (
+                        perto
+                        and not noticia_concluida
+                        and not jogo_concluido
+                        and vidas > 0
+                    ):
                         investigando = True
 
         # Movimentação do jogador
-        if not investigando and vidas > 0 and not noticia_concluida:
+        if (
+            not investigando
+            and vidas > 0
+            and not jogo_concluido
+        ):
 
             jogador_x, jogador_y = movimentar_jogador(
                 jogador_x,
@@ -172,8 +217,15 @@ def executar_jogo():
             f"Vidas: {vidas}", True, COR_TEXTO
         )
 
+        texto_investigacoes = fonte.render(
+            f"Investigação: {min(numero_noticia + 1, total_noticias)}/{total_noticias}",
+            True,
+            COR_TEXTO,
+        )
+
         tela.blit(texto_pontos, (20, 20))
         tela.blit(texto_vidas, (20, 55))
+        tela.blit(texto_investigacoes, (20, 90))
 
         # Verifica se o jogador está perto do computador
         perto = jogador_perto_computador(
@@ -187,16 +239,31 @@ def executar_jogo():
             ALTURA_COMPUTADOR,
         )
 
-        if perto and not investigando and not noticia_concluida:
+        # Mensagem para iniciar investigação
+        if (
+            perto
+            and not investigando
+            and not noticia_concluida
+            and not jogo_concluido
+            and vidas > 0
+        ):
+
             texto = fonte.render(
                 "Pressione E para investigar",
                 True,
                 COR_TEXTO,
             )
+
             tela.blit(texto, (250, 520))
 
         # Exibe a tela de investigação
-        if investigando and noticia_atual is not None:
+        # Exibe a tela de investigação somente se o jogador ainda tiver vidas
+        if (
+            investigando
+            and noticia_atual is not None
+            and vidas > 0
+            and not jogo_concluido
+        ):
 
             desenhar_tela_investigacao(
                 tela,
@@ -204,31 +271,89 @@ def executar_jogo():
                 resultado,
             )
 
+            # Após responder, mostra a instrução para continuar
             if resultado is not None:
+
                 texto = fonte.render(
-                    "Pressione E para fechar",
+                    "Pressione E para continuar",
                     True,
                     COR_TEXTO,
                 )
+
                 tela.blit(texto, (250, 550))
 
         # Mensagem de investigação concluída
         if noticia_concluida and not investigando and vidas > 0:
+
             texto = fonte.render(
                 "Investigação concluída!",
                 True,
                 COR_TEXTO,
             )
+
             tela.blit(texto, (250, 520))
 
-        # Verifica se o jogador perdeu todas as vidas
+        # Tela de fim de jogo por falta de vidas
         if vidas <= 0:
-            texto = fonte.render(
-                "Fim de jogo! Você ficou sem vidas.",
+
+            pygame.draw.rect(
+                tela,
+                (48, 39, 71),
+                (100, 200, 600, 200),
+            )
+
+            texto_titulo = fonte_titulo.render(
+                "Fim de jogo!",
                 True,
                 COR_TEXTO,
             )
-            tela.blit(texto, (200, 520))
+
+            texto_mensagem = fonte.render(
+                "Você ficou sem vidas.",
+                True,
+                COR_TEXTO,
+            )
+
+            texto_pontuacao = fonte.render(
+                f"Pontuação final: {pontos}",
+                True,
+                COR_TEXTO,
+            )
+
+            tela.blit(texto_titulo, (280, 230))
+            tela.blit(texto_mensagem, (260, 290))
+            tela.blit(texto_pontuacao, (270, 340))
+
+        # Tela de conclusão das investigações
+        if jogo_concluido:
+
+            pygame.draw.rect(
+                tela,
+                (48, 39, 71),
+                (100, 180, 600, 240),
+            )
+
+            texto_titulo = fonte_titulo.render(
+                "Investigações concluídas!",
+                True,
+                COR_TEXTO,
+            )
+
+            texto_pontuacao = fonte.render(
+                f"Pontuação final: {pontos}",
+                True,
+                COR_TEXTO,
+            )
+
+            texto_mensagem = fonte.render(
+                "Parabéns, Detetive Digital!",
+                True,
+                COR_TEXTO,
+            )
+
+            tela.blit(texto_titulo, (145, 230))
+            tela.blit(texto_mensagem, (210, 300))
+            tela.blit(texto_pontuacao, (250, 350))
 
         pygame.display.flip()
 

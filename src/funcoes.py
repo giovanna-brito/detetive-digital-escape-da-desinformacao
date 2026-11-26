@@ -74,39 +74,95 @@ def desenhar_tela_investigacao(tela, noticia, resultado):
     fonte = pygame.font.Font(None, 25)
     fonte_titulo = pygame.font.Font(None, 34)
     fonte_noticia = pygame.font.Font(None, 28)
+    fonte_explicacao = pygame.font.Font(None, 23)
 
-    pygame.draw.rect(tela, (48, 39, 71), (70, 70, 660, 460))
+    cor_branca = (255, 255, 255)
+    cor_amarela = (242, 215, 126)
+    cor_painel = (48, 39, 71)
 
+    # Desenha o painel
+    pygame.draw.rect(
+        tela,
+        cor_painel,
+        (60, 55, 680, 490)
+    )
+
+    # Título do painel
     titulo = fonte_titulo.render(
-        "Investigação", True, (255, 255, 255)
+        "Investigação",
+        True,
+        cor_branca
     )
-    tela.blit(titulo, (100, 90))
 
-    titulo_noticia = fonte_noticia.render(
-        noticia["titulo"], True, (242, 215, 126)
-    )
-    tela.blit(titulo_noticia, (100, 145))
+    tela.blit(titulo, (100, 75))
 
-    # Exibe o conteúdo da notícia em linhas
-    palavras = noticia["conteudo"].split()
-    linhas = []
-    linha_atual = ""
+    # Função para quebrar textos em linhas
+    def quebrar_texto(texto, fonte, largura_maxima):
 
-    for palavra in palavras:
-        teste = linha_atual + palavra + " "
+        palavras = texto.split()
+        linhas = []
+        linha_atual = ""
 
-        if fonte.size(teste)[0] <= 590:
-            linha_atual = teste
-        else:
+        for palavra in palavras:
+
+            teste = linha_atual + palavra + " "
+
+            if fonte.size(teste)[0] <= largura_maxima:
+                linha_atual = teste
+
+            else:
+                if linha_atual:
+                    linhas.append(linha_atual)
+
+                linha_atual = palavra + " "
+
+        if linha_atual:
             linhas.append(linha_atual)
-            linha_atual = palavra + " "
 
-    if linha_atual:
-        linhas.append(linha_atual)
+        return linhas
 
-    for i, linha in enumerate(linhas):
-        texto = fonte.render(linha, True, (255, 255, 255))
-        tela.blit(texto, (100, 190 + i * 28))
+    # Desenha o título da notícia
+    linhas_titulo = quebrar_texto(
+        noticia["titulo"],
+        fonte_noticia,
+        620
+    )
+
+    y = 125
+
+    for linha in linhas_titulo:
+
+        texto = fonte_noticia.render(
+            linha,
+            True,
+            cor_amarela
+        )
+
+        tela.blit(texto, (100, y))
+        y += 32
+
+    # Desenha o conteúdo da notícia
+    y += 10
+
+    linhas_conteudo = quebrar_texto(
+        noticia["conteudo"],
+        fonte,
+        620
+    )
+
+    for linha in linhas_conteudo:
+
+        texto = fonte.render(
+            linha,
+            True,
+            cor_branca
+        )
+
+        tela.blit(texto, (100, y))
+        y += 29
+
+    # Desenha as opções de classificação
+    y += 15
 
     opcoes = [
         "1 - Real",
@@ -114,25 +170,54 @@ def desenhar_tela_investigacao(tela, noticia, resultado):
         "3 - Criada por IA"
     ]
 
-    for i, opcao in enumerate(opcoes):
-        texto = fonte.render(opcao, True, (255, 255, 255))
-        tela.blit(texto, (120, 300 + i * 35))
+    for opcao in opcoes:
 
-    if resultado is not None:
-        mensagem = (
-            "Resposta correta!" if resultado
-            else "Resposta incorreta!"
+        texto = fonte.render(
+            opcao,
+            True,
+            cor_branca
         )
+
+        tela.blit(texto, (120, y))
+        y += 32
+
+    # Se o jogador já respondeu, exibe o resultado
+    if resultado is not None:
+
+        y += 10
+
+        if resultado:
+            mensagem = "Resposta correta!"
+        else:
+            mensagem = "Resposta incorreta!"
 
         texto_resultado = fonte.render(
-            mensagem, True, (255, 255, 255)
+            mensagem,
+            True,
+            cor_branca
         )
-        tela.blit(texto_resultado, (120, 430))
 
-        explicacao = fonte.render(
-            noticia["explicacao"], True, (255, 255, 255)
+        tela.blit(texto_resultado, (120, y))
+
+        # Desenha a explicação com quebra automática
+        y += 35
+
+        linhas_explicacao = quebrar_texto(
+            noticia["explicacao"],
+            fonte_explicacao,
+            600
         )
-        tela.blit(explicacao, (120, 465))
+
+        for linha in linhas_explicacao:
+
+            texto = fonte_explicacao.render(
+                linha,
+                True,
+                cor_branca
+            )
+
+            tela.blit(texto, (120, y))
+            y += 26
 
 def verificar_resposta(resposta_escolhida, resposta_correta):
     """Verifica se a classificação escolhida está correta."""
