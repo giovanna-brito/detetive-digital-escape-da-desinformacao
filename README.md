@@ -3,11 +3,11 @@
 Projeto final da disciplina de Introdução a Algoritmos/Programação, desenvolvido com Python e Pygame.
 
 <p align="center">
-  <img src="assets/imagens/tela_inicial.png.png" width="700">
+  <img src="assets/imagens/tela_inicial.png.png" width="450">
 </p>
 
 <p align="center">
-  <img src="assets/imagens/tela_principal.png.png" width="700">
+  <img src="assets/imagens/tela_principal.png.png" width="450">
 </p>
 
 O jogo tem como proposta estimular o pensamento crítico e a análise de informações por meio de investigações sobre notícias reais, manipuladas e conteúdos criados por Inteligência Artificial.
