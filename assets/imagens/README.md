@@ -1,13 +1,13 @@
 # Imagens
 
-Pasta destinada a sprites, fundos, icones e outros elementos visuais.
+Pasta destinada ao armazenamento dos elementos visuais utilizados no projeto **Detetive Digital: Escape da Desinformação**.
 
-## Conteudo atual
+## Conteúdo
 
-- `spritesheet.bmp`: spritesheet base do template.
+- `spritesheet.bmp`: spritesheet base utilizado no desenvolvimento dos elementos visuais.
+- `tela_inicial.png`: captura de tela do menu inicial do jogo.
+- `tela_principal.png`: captura de tela do cenário principal do jogo.
 
-## Recomendações
+## Organização
 
-- Separe imagens por tema quando o projeto crescer.
-- Mantenha dimensoes e padroes consistentes para facilitar colisao e animacao.
-- Prefira formatos com transparencia quando necessario (ex.: `.png`).
+Os arquivos visuais estão organizados nesta pasta, facilitando sua localização e utilização no desenvolvimento e na documentação do projeto.

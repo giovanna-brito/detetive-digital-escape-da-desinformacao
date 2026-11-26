@@ -2,9 +2,17 @@
 
 Projeto final da disciplina de Introdução a Algoritmos/Programação, desenvolvido com Python e Pygame.
 
+<p align="center">
+  <img src="assets/imagens/tela_inicial.png" width="700">
+</p>
+
+<p align="center">
+  <img src="assets/imagens/tela_principal.png" width="700">
+</p>
+
 O jogo tem como proposta estimular o pensamento crítico e a análise de informações por meio de investigações sobre notícias reais, manipuladas e conteúdos criados por Inteligência Artificial.
 
-## Integrantes do grupo
+## Integrante
 
 - Giovanna Brito Silva Ribeiro
 
@@ -14,7 +22,7 @@ O jogo tem como proposta estimular o pensamento crítico e a análise de informa
 - `src/`: código-fonte principal do jogo, incluindo configurações, funções, gerenciamento de dados, sprites e execução da partida.
 - `assets/`: imagens, fontes e sons utilizados no jogo.
 - `data/`: diretório destinado ao armazenamento de dados do jogo.
-- `tests/`: testes unitários com `pytest`.
+- `tests/`: testes automatizados das funções de lógica.
 - `docs/`: documentação do projeto, incluindo a proposta inicial.
 
 ## Descrição do jogo
@@ -31,31 +39,41 @@ Após cada investigação, o jogador recebe o resultado da classificação e uma
 
 ## Objetivo do jogador
 
-O objetivo é investigar os conteúdos apresentados, identificar corretamente sua classificação e avançar pelas etapas do jogo.
+O objetivo é investigar os conteúdos apresentados, identificar corretamente sua classificação e concluir as investigações.
 
 O jogador deve utilizar as informações disponíveis e desenvolver uma postura crítica diante de conteúdos que circulam no ambiente digital.
 
 ## Regras do jogo
 
 - O jogador controla um personagem que pode se movimentar pelo cenário.
-- Para iniciar uma investigação, é necessário se aproximar de um computador e pressionar a tecla E.
+- Para iniciar uma investigação, é necessário se aproximar de um computador e pressionar a tecla `E`.
 - Cada notícia apresenta três possibilidades de classificação.
 - Uma resposta correta aumenta a pontuação.
 - Uma resposta incorreta reduz uma vida.
-- O jogo possui inicialmente três vidas.
+- O jogador inicia a partida com três vidas.
 - Após responder, o jogador recebe uma explicação sobre a classificação.
+- O jogo possui condições de vitória e derrota, de acordo com o desempenho do jogador.
 
 ## Controles
 
-- W: mover para cima.
-- S: mover para baixo.
-- A: mover para a esquerda.
-- D: mover para a direita.
-- E: interagir com o computador e abrir ou fechar a investigação.
-- 1: classificar como Real.
-- 2: classificar como Manipulada.
-- 3: classificar como Criada por IA.
-- Fechar a janela: sair do jogo.
+| Tecla | Ação |
+|---|---|
+| `W` | Mover para cima |
+| `S` | Mover para baixo |
+| `A` | Mover para a esquerda |
+| `D` | Mover para a direita |
+| `E` | Interagir com o computador e abrir ou fechar a investigação |
+| `1` | Classificar como Real |
+| `2` | Classificar como Manipulada |
+| `3` | Classificar como Criada por IA |
+| Fechar janela | Sair do jogo |
+
+## Tecnologias utilizadas
+
+- Python
+- Pygame
+- Unittest
+- Git e GitHub
 
 ## Como executar o projeto
 
@@ -63,16 +81,21 @@ O jogador deve utilizar as informações disponíveis e desenvolver uma postura 
 
 ```bash
 git clone https://github.com/giovanna-brito/detetive-digital-escape-da-desinformacao.git
+```
+
+### 2. Entrar na pasta do projeto
+
+```bash
 cd detetive-digital-escape-da-desinformacao
 ```
 
-### 2. Instalar as dependências
+### 3. Instalar as dependências
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Executar o jogo
+### 4. Executar o jogo
 
 ```bash
 python main.py
@@ -80,21 +103,18 @@ python main.py
 
 ## Como executar os testes
 
-Para executar os testes automatizados, utilize:
+Para executar os testes automatizados das funções de lógica:
 
 ```bash
-python -m pytest
+python -m unittest discover -s tests -p "test_logica.py" -v
 ```
 
-## Checklist mínimo para entrega
+## Documentação
 
-- [x] Preencher o README com a descrição e as regras atuais do jogo.
-- [ ] Atualizar `docs/proposta.MD` com a proposta do grupo.
-- [x] Garantir que o jogo executa com `python main.py`.
-- [ ] Criar e executar os testes com `pytest`.
+A documentação do projeto, incluindo a proposta inicial, está disponível na pasta `docs/`.
 
-## Observações
+## Considerações finais
 
-- O projeto está sendo desenvolvido de forma modular, com separação entre configurações, regras, dados e execução do jogo.
-- As notícias e suas respectivas respostas são previamente cadastradas.
-- O desenvolvimento está em andamento. Funcionalidades como progressão entre investigações e organização das três fases ainda serão implementadas.
+O projeto foi desenvolvido utilizando programação modular, com separação entre configurações, funções, dados e execução do jogo.
+
+As notícias e suas respectivas classificações são previamente cadastradas. O jogo busca promover o pensamento crítico e a conscientização sobre a importância de verificar informações antes de compartilhá-las.
